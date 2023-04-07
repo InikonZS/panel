@@ -135,7 +135,7 @@ export class Panel{
         return {
         }
     }
-
+    //pm2 start "node panel.js port=4101"
     setRepo = async (props: {name:string, url:string, port: string, execPath:string, npmPath:string}) => {
         const name = props.name;
         const url = props.url; 
@@ -156,7 +156,7 @@ export class Panel{
         } 
     }
 
-    addSite = async () => {
+    async updateConfig(){
         const domain = `node.inikon.online`;
         const apacheSitesDir = `/etc/apache2/sites-available`;
         //const apacheSitesDir = path.join(__dirname, 'config');
@@ -167,6 +167,19 @@ export class Panel{
 
         });
         await apacheReload();
+    }
+
+    addSite = async () => {
+    /*    const domain = `node.inikon.online`;
+        const apacheSitesDir = `/etc/apache2/sites-available`;
+        //const apacheSitesDir = path.join(__dirname, 'config');
+        const apacheConfigPath = path.join(apacheSitesDir, domain+'.conf');
+
+        const configText= await updateConfig(domain);
+        await fs.writeFile(apacheConfigPath, configText, {encoding:'utf8'}).then(res=>{
+
+        });
+        await apacheReload();*/
         /*const siteList = [
             {
                 source: '/one',
@@ -194,6 +207,7 @@ export class Panel{
             await createSiteFolder('test'+(Math.random()* 10000).toFixed(0));
           //await cloneRepo('./test', 'https://github.com/InikonZS/reactShop.git', 'myDir1');
           //await npmInstall('./test', 'myDir1');
+          this.updateConfig();
             return {
                 ok: true,
                 result: {}
@@ -274,6 +288,7 @@ async function updateSite(name:string, meta: ISiteBaseInfo){
     if (meta.activated == 'yes'){
         await pm2Start(path.join(sitesRoot, name, meta.execPath), meta.port);
     }
+    this.updateConfig();
 }
 
 function cloneRepo(dir: string, url: string, cloneName: string){
@@ -393,7 +408,7 @@ async function exec(command: string, cwd: string = ''){
 }
 
 async function pm2Start(execFile: string, port: string){
-    return exec(`pm2 start ${execFile} --node-args "port=${port}"`);
+    return exec(`pm2 start ${execFile} --node-args "${execFile} port=${port}"`);
 }
 
 async function pm2Delete(id: string){
