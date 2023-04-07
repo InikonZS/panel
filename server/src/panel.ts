@@ -258,7 +258,8 @@ async function updateSite(name:string, meta: ISiteBaseInfo){
 
     const list: Array<typeof pm2proc> = await getPm2List();
     const proc = list.find(it=>{
-        it.pm2_env.pm_exec_path == meta.execPath
+        console.log(it.pm2_env.pm_exec_path, meta.execPath, path.join(sitesRoot, name, meta.execPath));
+        return it.pm2_env.pm_exec_path == path.join(sitesRoot, name, meta.execPath)
     })
 
     if (proc) {
@@ -287,6 +288,8 @@ async function updateSite(name:string, meta: ISiteBaseInfo){
     //cloneRepo
     //npmInstall
     //npmBuild
+
+    //pm2 restart
     if (meta.activated == 'yes'){
         await pm2Start(path.join(sitesRoot, name, meta.execPath), meta.port);
     }
