@@ -70,8 +70,9 @@ export class Panel{
     }
 
     async handleRequest(req:http.IncomingMessage):Promise<string>{
-        const prefix = '/'; //for apache
+        const prefix = ''; //for apache
         const url = req.url.slice(prefix.length);
+        console.log(req.url);
         const endpointKey = url.split('/')[1].split('?')[0];
         console.log(endpointKey);
         const endpoint = this.endpoints[endpointKey];
