@@ -99,7 +99,7 @@ export class Panel{
         }
     }
 
-    updateSite = async (props:{name: string, url: string, port: string}) => {
+    updateSite = async (props:{name: string, url: string, port: string, execPath:string, npmPath:string}) => {
         //updateConfig()
         //apacheReload()
 
@@ -115,9 +115,9 @@ export class Panel{
             apacheDest: 'http://localhost:'+props.port||'3000',
             repoFolder: 'unuzed prop',
             repoUrl: props.url,//'https://github.com/InikonZS/reactShop.git',
-            execPath: './dist/index.js',
+            execPath: props.execPath,//'./dist/index.js',
             execCommand: '',
-            npmPath: './server',
+            npmPath: props.npmPath,//'./server',
             npmBuildCommand: 'npm run build',
             activated: 'yes',
             port: props.port||'3000'
@@ -136,7 +136,7 @@ export class Panel{
         }
     }
 
-    setRepo = async (props: {name:string, url:string, port: string}) => {
+    setRepo = async (props: {name:string, url:string, port: string, execPath:string, npmPath:string}) => {
         const name = props.name;
         const url = props.url; 
         const siteFolder = path.join(sitesRoot, name);
