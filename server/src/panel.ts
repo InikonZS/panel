@@ -122,6 +122,7 @@ export class Panel{
             activated: 'yes',
             port: props.port||'3000'
         });
+        this.updateConfig();
         return {
             result
         }
@@ -288,7 +289,7 @@ async function updateSite(name:string, meta: ISiteBaseInfo){
     if (meta.activated == 'yes'){
         await pm2Start(path.join(sitesRoot, name, meta.execPath), meta.port);
     }
-    this.updateConfig();
+
 }
 
 function cloneRepo(dir: string, url: string, cloneName: string){
