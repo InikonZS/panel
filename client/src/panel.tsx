@@ -8,7 +8,7 @@ interface ISiteInfo {
     name: string
 }
 
-const url = 'http://localhost:4003';
+const url = 'http://localhost:4004';
 
 export function Panel({onClose}: IPanelProps){
     const [sites, setSites] = useState<ISiteInfo[]>([]);

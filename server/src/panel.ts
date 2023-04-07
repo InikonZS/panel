@@ -112,7 +112,7 @@ export class Panel{
             apacheDest: 'http://localhost:3000',
             repoFolder: 'unuzed prop',
             repoUrl: props.url,//'https://github.com/InikonZS/reactShop.git',
-            execPath: 'index.js',
+            execPath: './dist/index.js',
             execCommand: '',
             npmPath: '',
             npmBuildCommand: 'npm run build',
@@ -153,9 +153,9 @@ export class Panel{
     }
 
     addSite = async () => {
-        const domain = `wordstest.inikon.online`;
-        //const apacheSitesDir = `/etc/apache2/sites-available`;
-        const apacheSitesDir = path.join(__dirname, 'config');
+        const domain = `node.inikon.online`;
+        const apacheSitesDir = `/etc/apache2/sites-available`;
+        //const apacheSitesDir = path.join(__dirname, 'config');
         const apacheConfigPath = path.join(apacheSitesDir, domain+'.conf');
 
         const configText= await updateConfig(domain);
@@ -251,6 +251,7 @@ async function updateSite(name:string, meta: ISiteBaseInfo){
         await removeRepo(path.join(sitesRoot, name, 'repo'));
         await cloneRepo(path.join(sitesRoot, name), meta.repoUrl, 'repo');
     } else {
+        await gitPull(path.join(sitesRoot, name), 'repo');
         //checkout or pull
     }
     
@@ -281,6 +282,10 @@ function cloneRepo(dir: string, url: string, cloneName: string){
             })
         }
     )})
+}
+
+async function gitPull(dir: string, cloneName: string){
+    return exec(`git pull`, path.join(dir, cloneName));
 }
 
 function removeRepo(dir: string){
@@ -393,6 +398,17 @@ async function apacheReload(){
 
 //const sitesRoot = '/root/sites'
 const sitesRoot = path.join(__dirname, 'sites');
+async function checkSiteDir(dir:string){
+    try{
+        //const stat = await fs.stat(sitesRoot);
+        await fs.mkdir(dir);
+    } catch(e){
+        
+    }
+}
+checkSiteDir(sitesRoot); 
+checkSiteDir(path.join(__dirname, 'config')); 
+
 async function getSitesFolder(){
     const result: {
         name: string,
