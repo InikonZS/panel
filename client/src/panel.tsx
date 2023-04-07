@@ -14,6 +14,8 @@ export function Panel({onClose}: IPanelProps){
     const [sites, setSites] = useState<ISiteInfo[]>([]);
     const [selected, setSelected] = useState<string | null>(null);
     const [repoUrl, setRepoUrl] = useState('');
+    const [port, setPort] = useState('3000');
+
     useEffect(()=>{
         fetch(url+'/getSites').then(res=>res.json()).then(data => {
             setSites(data.sites);
@@ -42,6 +44,9 @@ export function Panel({onClose}: IPanelProps){
                 <div>
                     <input type="text" onChange={(e)=>{
                         setRepoUrl(e.target.value)
+                    }}></input>
+                    <input type="text" value={port} onChange={(e)=>{
+                        setPort(e.target.value)
                     }}></input>
                     <button onClick={()=>{
                         fetch(`${url}/setRepo?name=${selected}&url=${repoUrl}`).then(res=>res.json()).then(data => {

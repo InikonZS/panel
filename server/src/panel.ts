@@ -96,7 +96,7 @@ export class Panel{
         }
     }
 
-    updateSite = async (props:{name: string, url: string}) => {
+    updateSite = async (props:{name: string, url: string, port: string}) => {
         //updateConfig()
         //apacheReload()
 
@@ -109,12 +109,12 @@ export class Panel{
         const result = await updateSite(props.name, {
             displayName: props.name,
             apacheSource: props.name,
-            apacheDest: 'http://localhost:3000',
+            apacheDest: 'http://localhost:'+props.port||'3000',
             repoFolder: 'unuzed prop',
             repoUrl: props.url,//'https://github.com/InikonZS/reactShop.git',
             execPath: './dist/index.js',
             execCommand: '',
-            npmPath: '',
+            npmPath: './server',
             npmBuildCommand: 'npm run build',
             activated: 'yes'
         });
@@ -132,7 +132,7 @@ export class Panel{
         }
     }
 
-    setRepo = async (props: {name:string, url:string}) => {
+    setRepo = async (props: {name:string, url:string, port: string}) => {
         const name = props.name;
         const url = props.url; 
         const siteFolder = path.join(sitesRoot, name);
@@ -256,7 +256,7 @@ async function updateSite(name:string, meta: ISiteBaseInfo){
     }
     
     await npmInstall(path.join(sitesRoot, name), 'repo');
-    await exec(meta.npmBuildCommand, path.join(sitesRoot, name, 'repo'));
+    await exec(meta.npmBuildCommand, path.join(sitesRoot, name, 'repo', meta.npmPath));
     //removeRepo
     //cloneRepo
     //npmInstall
