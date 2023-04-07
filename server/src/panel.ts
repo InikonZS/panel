@@ -249,10 +249,16 @@ async function updateSite(name:string, meta: ISiteBaseInfo){
         console.log('Stop old site version process');
         await pm2Delete(proc.pm_id.toString()); 
     }
+
+    const hard = true;
     
-    if (oldMeta.repoUrl != meta.repoUrl){
+    if (hard || (oldMeta.repoUrl != meta.repoUrl)){
         console.log('Repo is changed ', oldMeta.repoUrl, ' -> ', meta.repoUrl);
-        await removeRepo(path.join(sitesRoot, name, 'repo'));
+        try {
+            await removeRepo(path.join(sitesRoot, name, 'repo'));
+        } catch(e){
+            console.log('First clone.')
+        }
         await cloneRepo(path.join(sitesRoot, name), meta.repoUrl, 'repo');
     } else {
         await gitPull(path.join(sitesRoot, name), 'repo');
