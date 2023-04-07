@@ -13,6 +13,7 @@ interface ISiteBaseInfo{
     execCommand: string, // ???
     npmPath: string,
     npmBuildCommand: string,
+    port: string,
     activated: 'yes' | 'no'
 }
 
@@ -116,7 +117,8 @@ export class Panel{
             execCommand: '',
             npmPath: './server',
             npmBuildCommand: 'npm run build',
-            activated: 'yes'
+            activated: 'yes',
+            port: props.port||'3000'
         });
         return {
             result
@@ -262,7 +264,7 @@ async function updateSite(name:string, meta: ISiteBaseInfo){
     //npmInstall
     //npmBuild
     if (meta.activated == 'yes'){
-        await pm2Start(path.join(sitesRoot, name, meta.execPath));
+        await pm2Start(path.join(sitesRoot, name, meta.execPath), meta.port);
     }
 }
 
@@ -382,8 +384,8 @@ async function exec(command: string, cwd: string = ''){
     });
 }
 
-async function pm2Start(execFile: string){
-    return exec(`pm2 start ${execFile}`);
+async function pm2Start(execFile: string, port: string){
+    return exec(`pm2 start ${execFile} --node-args "port=${port}"`);
 }
 
 async function pm2Delete(id: string){
