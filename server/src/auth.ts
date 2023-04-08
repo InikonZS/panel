@@ -1,7 +1,7 @@
 import * as fs from 'fs/promises';
 import * as path from 'path';
 
-enum AccessLevel {
+export enum AccessLevel {
     guest = 0,
     user = 1,
     owner = 2

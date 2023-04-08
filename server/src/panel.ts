@@ -2,6 +2,7 @@ import * as http from 'http';
 import * as childProcess from 'child_process';
 import * as fs from 'fs/promises';
 import * as path from 'path';
+import { AccessLevel, Auth } from './auth';
 
 interface ISiteBaseInfo{
     displayName: string,
@@ -55,16 +56,39 @@ class SiteList{
 
 
 export class Panel{
-    endpoints: Record<string, (props:any)=>Promise<Object>>
+    endpoints: Record<string, {access: AccessLevel, func:(props:any)=>Promise<Object>}>
+    auth: Auth;
     constructor(){
+        this.auth = new Auth();
+        this.auth.init();
         //childProcess.exec('git status', (err, out)=>{
         //    console.log(out);
         //});//.stdout.on('data', (ch)=> console.log('ch -> ', ch));
         this.endpoints = {
-            getSites: this.getSites,
-            addSite: this.addSite,
-            setRepo: this.setRepo,
-            deleteSite: this.deleteSite,
+            getSites: {
+                access: AccessLevel.owner,
+                func: this.getSites
+            },
+            addSite: {
+                access: AccessLevel.owner,
+                func: this.addSite,
+            },
+            setRepo: {
+                access: AccessLevel.owner,
+                func: this.setRepo,
+            },
+            deleteSite: {
+                access: AccessLevel.owner,
+                func: this.deleteSite,
+            },
+            login: {
+                access: AccessLevel.guest,
+                func: async ()=>{return {}},
+            },
+            register: {
+                access: AccessLevel.guest,
+                func: async ()=>{return {}},
+            }
             //updateSite: this.updateSite
         }
     }
@@ -85,7 +109,18 @@ export class Panel{
         });
         console.log(params);
         try{
-            const result = await endpoint(params);
+            let user = null;
+            if (params['session']){
+                user = this.auth.checkSession(params['session']);
+            }
+            let access = AccessLevel.guest;
+            if (user){
+                access = user.access;
+            }
+            if (access< endpoint.access){
+                throw new Error('Panel: not enough access level');
+            }
+            const result = await endpoint.func(params);
             return JSON.stringify(result);
         } catch(e){
             console.log(e);
