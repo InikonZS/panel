@@ -3,6 +3,7 @@ import * as path from "path"
 import * as fs from "fs"
 import * as url from "url"
 import { Panel } from './panel';
+import { Auth } from './auth';
 
 console.log(process.argv);
 let argPort: number = null;
