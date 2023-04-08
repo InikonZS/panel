@@ -20,13 +20,20 @@ export function Panel({onClose}: IPanelProps){
 
     const session = localStorage.getItem('session');
 
-    useEffect(()=>{
+    const getSites = ()=>{
         fetch(url+`/getSites?session=${session}`).then(res=>res.json()).then(data => {
             setSites(data.sites);
         })
+    }
+    
+    useEffect(()=>{
+        getSites();
     }, []);
 
     return <div>
+        <button onClick={()=>{
+            getSites();
+        }}>refresh</button>
         <button onClick={()=>onClose()}>close</button>
         <button onClick={()=>{
              fetch(url+`/addSite?session=${session}`).then(res=>res.json()).then(data => {
