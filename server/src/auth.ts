@@ -120,11 +120,20 @@ export class Auth{
     }
 
     async register(name: string, password: string){
-        this.base.write({
+        const dump = await this.base.read();
+        if ((typeof name != 'string') || (name.length<2) || (/[^a-zA-Z0-9]/).test(name)){
+            return false;
+        }
+        const user = dump.find(it=> (it.name == name));
+        if (user){
+            return false;
+        }
+        await this.base.write({
            name,
            password,
            access: AccessLevel.user 
         })
+        return true;
     }
 
     findSessionByUser(user:IUser){

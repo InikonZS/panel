@@ -83,11 +83,21 @@ export class Panel{
             },
             login: {
                 access: AccessLevel.guest,
-                func: async ()=>{return {}},
+                func: async (props: {name: string, password: string})=>{
+                    const res = await this.auth.login(props.name, props.password);
+                    return {
+                        status: res
+                    }
+                },
             },
             register: {
                 access: AccessLevel.guest,
-                func: async ()=>{return {}},
+                func: async (props: {name: string, password: string})=>{
+                    const res = await this.auth.register(props.name, props.password);
+                    return {
+                        status: res
+                    }
+                }
             }
             //updateSite: this.updateSite
         }

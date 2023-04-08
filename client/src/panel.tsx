@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-
+import { url } from "./consts";
 interface IPanelProps {
     onClose: ()=>void;
 }
@@ -9,7 +9,6 @@ interface ISiteInfo {
 }
 
 //const url = 'http://localhost:4004';
-const url = 'https://words.inikon.online/panel';
 
 export function Panel({onClose}: IPanelProps){
     const [sites, setSites] = useState<ISiteInfo[]>([]);
@@ -19,15 +18,18 @@ export function Panel({onClose}: IPanelProps){
     const [npmPath, setNpmPath] = useState('./server');
     const [execPath, setExecPath] = useState('./server/dist/panel.js');
 
+    const session = localStorage.getItem('session');
+
     useEffect(()=>{
-        fetch(url+'/getSites').then(res=>res.json()).then(data => {
+        fetch(url+`/getSites?session=${session}`).then(res=>res.json()).then(data => {
             setSites(data.sites);
         })
     }, []);
+
     return <div>
         <button onClick={()=>onClose()}>close</button>
         <button onClick={()=>{
-             fetch(url+'/addSite').then(res=>res.json()).then(data => {
+             fetch(url+`/addSite?session=${session}`).then(res=>res.json()).then(data => {
                 console.log(data);
                 //setSites(data.sites);
             })
@@ -62,7 +64,7 @@ export function Panel({onClose}: IPanelProps){
                         setExecPath(e.target.value)
                     }}></input>
                     <button onClick={()=>{
-                        fetch(`${url}/setRepo?name=${selected}&url=${repoUrl}&port=${port}&npmPath=${npmPath}&execPath=${execPath}`).then(res=>res.json()).then(data => {
+                        fetch(`${url}/setRepo?session=${session}&name=${selected}&url=${repoUrl}&port=${port}&npmPath=${npmPath}&execPath=${execPath}`).then(res=>res.json()).then(data => {
                             console.log(data);
                             //setSelected(null);
                         })
