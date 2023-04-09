@@ -17,6 +17,8 @@ export function Panel({onClose}: IPanelProps){
     const [port, setPort] = useState('3000');
     const [npmPath, setNpmPath] = useState('./server');
     const [execPath, setExecPath] = useState('./server/dist/panel.js');
+    const [files, setFiles] = useState<Array<{size: number, type: string, name: string}>>([]);
+    const [path, setPath] = useState('');
 
     const session = localStorage.getItem('session');
 
@@ -25,12 +27,36 @@ export function Panel({onClose}: IPanelProps){
             setSites(data.sites);
         })
     }
-    
+
+    const getDir = (path:string)=>{
+        fetch(url+`/getFolder?session=${session}&path=${path}`).then(res=>res.json()).then(data => {
+            if (Array.isArray(data.items)){
+                setFiles([{name:'..', type: 'dir', size:0}, ...data.items]);
+            }
+            setPath(data.path);
+        })
+    }
+
     useEffect(()=>{
         getSites();
+        getDir('');
     }, []);
 
     return <div>
+        <div>
+            <div>path: {path}</div>
+            {files.map(item=>{
+                return <div onClick={()=>{
+                    if (item.type == 'dir'){
+                        getDir(path+'/'+item.name);
+                    }
+                }}>
+                    <span>{item.name} </span>
+                    <span>{item.size} </span>
+                    <span>{item.type} </span>
+                </div>
+            })}
+        </div>
         <button onClick={()=>{
             getSites();
         }}>refresh</button>

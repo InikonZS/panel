@@ -98,6 +98,43 @@ export class Panel{
                         status: res
                     }
                 }
+            },
+            getFolder: {
+                access: AccessLevel.owner,
+                func: async (props: {path?: string})=>{
+                    const currentPath = path.join(props.path || __dirname);
+                    try{
+                        console.log(props.path, currentPath);
+                        const names = await fs.readdir(props.path || path.join(__dirname));
+                        //console.log(names);
+                        const items: Array<any> = [];
+                        for (const name of names){
+                            try {
+                                const stat = await fs.stat(path.join(currentPath, name));
+                                //console.log(stat);
+                                items.push({
+                                    
+                                    name: name,
+                                    type: stat?.isDirectory() ? 'dir': 'file',
+                                    size: stat.size
+                                })
+                            } catch (e){
+                                console.log('wrong file '+ name);
+                            }
+                        }
+                        return {
+                            ok: true,
+                            items: items,
+                            path: currentPath,
+                        }
+                    } catch(e){
+                        return {
+                            ok:false,
+                            items: [],
+                            path: currentPath,
+                        }
+                    }
+                }
             }
             //updateSite: this.updateSite
         }
