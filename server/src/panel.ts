@@ -135,6 +135,28 @@ export class Panel{
                         }
                     }
                 }
+            },
+            getProcessList:{
+                access: AccessLevel.owner,
+                func: async () =>{
+                    const list: (typeof pm2proc)[] = await getPm2List();
+                    const outList = list.map(it=>{
+                        return {
+                            pid: it.pid,
+                            name: it.name,
+                            pm_id: it.pm_id,
+                            memory: it.monit.memory,
+                            cpu: it.monit.cpu,
+                            status: it.pm2_env.status,
+                            cwd: it.pm2_env.pm_cwd,
+                            exec_file: it.pm2_env.pm_exec_path
+                        }
+                    })
+                    return {
+                        ok: true,
+                        list: outList
+                    }
+                }
             }
             //updateSite: this.updateSite
         }

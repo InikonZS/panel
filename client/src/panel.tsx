@@ -19,6 +19,7 @@ export function Panel({onClose}: IPanelProps){
     const [execPath, setExecPath] = useState('./server/dist/panel.js');
     const [files, setFiles] = useState<Array<{size: number, type: string, name: string}>>([]);
     const [path, setPath] = useState('');
+    const [processList, setProcessList] = useState<Array<any>>([]);
 
     const session = localStorage.getItem('session');
 
@@ -37,12 +38,34 @@ export function Panel({onClose}: IPanelProps){
         })
     }
 
+    const getProcessList = ()=>{
+        fetch(url+`/getProcessList?session=${session}`).then(res=>res.json()).then(data => {
+            if (data.ok){
+                setProcessList([data.list]);
+            }
+        })
+    }
+
     useEffect(()=>{
         getSites();
         getDir('');
+        getProcessList();
     }, []);
 
     return <div>
+        <div>
+            {processList.map(it=>{
+                return <div>
+                    <span>{it.name} </span>
+                    <span>{it.pm_id} </span>
+                    <span>{it.pid} </span> 
+                    <span>{it.memory} </span>
+                    <span>{it.cpu} </span>
+                    <span>{it.status} </span>
+                    <span>{it.exec_file} </span> 
+                </div>
+            })}
+        </div>
         <div>
             <div>path: {path}</div>
             {files.map(item=>{
