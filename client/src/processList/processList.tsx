@@ -1,8 +1,10 @@
 import React, { useEffect, useState } from "react";
+import { FileList } from "../fileList/fileList";
 import { url } from "../consts";
 
 export function ProcessList(){
     const [processList, setProcessList] = useState<Array<any>>([]);
+    const [openFile, setOpenFile] = useState(false);
     const session = localStorage.getItem('session');
 
     const getProcessList = ()=>{
@@ -18,11 +20,20 @@ export function ProcessList(){
     }, []);
 
     return <div>
+        {
+            openFile && <FileList onCancel={()=>{
+                setOpenFile(false);
+            }} onOk={(file=>{
+                //startProcess;
+                console.log(file);
+                setOpenFile(false);
+            })}/>
+        }
         <button onClick={()=>{
             getProcessList();
         }}>refresh</button>
         <button onClick={()=>{
-
+            setOpenFile(true);
         }}>new process</button>
         {processList.map(it=>{
             return <div>

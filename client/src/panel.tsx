@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { url } from "./consts";
 import { ProcessList } from "./processList/processList";
+import { FileList } from "./fileList/fileList";
+
 interface IPanelProps {
     onClose: ()=>void;
 }
@@ -30,14 +32,14 @@ export function Panel({onClose}: IPanelProps){
         })
     }
 
-    const getDir = (path:string)=>{
+   /* const getDir = (path:string)=>{
         fetch(url+`/getFolder?session=${session}&path=${path}`).then(res=>res.json()).then(data => {
             if (Array.isArray(data.items)){
                 setFiles([{name:'..', type: 'dir', size:0}, ...data.items]);
             }
             setPath(data.path);
         })
-    }
+    }*/
 
    /* const getProcessList = ()=>{
         fetch(url+`/getProcessList?session=${session}`).then(res=>res.json()).then(data => {
@@ -49,26 +51,18 @@ export function Panel({onClose}: IPanelProps){
 
     useEffect(()=>{
         getSites();
-        getDir('');
+       // getDir('');
        // getProcessList();
     }, []);
 
     return <div>
         <ProcessList></ProcessList>
-        <div>
-            <div>path: {path}</div>
-            {files.map(item=>{
-                return <div onClick={()=>{
-                    if (item.type == 'dir'){
-                        getDir(path+'/'+item.name);
-                    }
-                }}>
-                    <span>{item.name} </span>
-                    <span>{item.size} </span>
-                    <span>{item.type} </span>
-                </div>
-            })}
-        </div>
+        <FileList onCancel={()=>{
+
+        }} onOk={(file)=>{
+            console.log(file)
+        }}></FileList>
+
         <button onClick={()=>{
             getSites();
         }}>refresh</button>
